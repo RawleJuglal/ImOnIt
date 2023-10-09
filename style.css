@@ -40,7 +40,7 @@ body{
 
 .--logged-out-view{
   background: url('src/assets/images/login-bg.jpg');
-  background-size:contain;
+  background-size:cover;
   background-repeat:no-repeat;
   min-height:90vh;
 }
