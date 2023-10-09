@@ -10,8 +10,19 @@
     <link rel="manifest" href="/site.webmanifest">
   </head>
   <body>
-    <div id="app">
-      <h1>I'm here</h1>
+    <div id="app" class="--app">
+      <div id="logged-out-view" class="--logged-out-view">
+        <form class='flex flex-column' action="">
+          <input type="text" name="email">
+          <input type="text" name="password">
+          <button class="link-btn">forgot your password?</button>
+          <input type="submit" value="Log in">
+          <button class="link-btn">Don't have an account?</button>
+        </form>
+      </div>
+      <div id="logged-in-view" class="--logged-in-view">
+        <h1>You logged in</h1>
+      </div>
     </div>
     <script type="module" src="/main.js"></script>
   </body>
