@@ -11,21 +11,36 @@
   </head>
   <body>
     <div id="app" class="--app">
-      <div id="logged-out-view" class="--logged-out-view">
+      <div id="logged-out-view" class="--logged-out-view XVIpt-px flex flex-column">
         <h1 class="bold text-center XXXIIpt-py">I'm On It</h1>
-        <button id="google-btn" class="--google-btn flex flex-align-center">
-          <img id="google-icon" class="--google-icon" src="/src/assets/providers/google.png" alt="google icon">
-          <span>Sign in with Google</span>
-        </button>
-        <form class='flex flex-column XVIpt-mx' action="">
-          <input type="text" name="email">
-          <input type="text" name="password">
-          <button class="link-btn">forgot your password?</button>
-          <input type="submit" value="Log in">
-          <button class="link-btn">Don't have an account?</button>
-        </form>
+        <div id="login-controls" class="--login-controls">
+          <button id="google-btn" class="--google-btn btn XVIpt-py">
+            <img id="google-icon" class="--google-icon" src="/src/assets/providers/google.png" alt="google icon">
+            <span>Sign in with Google</span>
+          </button>
+          <form class='flex flex-column' action="">
+            <input 
+              id="login-email"  
+              class="--login-email text-black bold XVIpt-pxy" 
+              type="text" 
+              name="email"
+              placeholder="Email"
+            >
+            <input 
+              id="login-password" 
+              class="--login-password text-black bold XVIpt-pxy" 
+              type="text" 
+              name="password"
+              placeholder="Password"
+            >
+            <button class="link-btn">forgot your password?</button>
+            <input id='submit-btn' class="--submit-btn btn text-center XVIpt-py" value="Log in">
+            <button class="link-btn">Don't have an account?</button>
+          </form>
+        </div>
+        
       </div>
-      <div id="logged-in-view" class="--logged-in-view">
+      <div id="logged-in-view" class="--logged-in-view block-center">
         <h1>You logged in</h1>
       </div>
     </div>

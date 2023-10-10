@@ -10,6 +10,9 @@
   --gunmetal:#2C3539;
   --indigo:#4b0082;
   --hooker:	#49796b;
+  --oranred:#FF473A;
+  --black:#131313;
+  --white:#F8F8F8;
   --VIIIpt:.5rem;
   --XVIpt:1rem;
   --XXIVpt:1.5rem;
@@ -23,18 +26,27 @@ body{
   background-color:var(--gunmetal);
 }
 
+h1,h2,h3,h4,h5,h6{
+  margin:0;
+  padding: 0;
+}
+
 .XVIpt-my{margin:var(--XVIpt) 0}
 .XVIpt-mx{margin:0 var(--XVIpt)}
 .XXXIIpt-my{margin:var(--XXXIIpt) 0}
 .XXXIIpt-mx{margin:0 var(--XXXIIpt)}
 
+.XVIpt-pxy{padding:var(--XVIpt) var(--XVIpt)}
 .XVIpt-py{padding:var(--XVIpt) 0}
 .XVIpt-px{padding:0 var(--XVIpt)}
 .XXXIIpt-py{padding:var(--XXXIIpt) 0}
 .XXXIIpt-px{padding:0 var(--XXXIIpt)}
 
+
 .bold{font-weight:700;}
 .text-center{text-align: center;}
+.text-black{color:var(--black);}
+.text-white{color:var(--white);}
 
 .flex{display:flex;}
 .flex-column{flex-direction: column;}
@@ -42,18 +54,28 @@ body{
 .flex-center{justify-content: center;}
 .flex-align-center{align-items: center;}
 
+.block-center{
+  margin:0 auto;
+}
+
+.btn{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  border:unset;
+  margin:.5rem 0;
+  box-shadow: 0px 4px 5px var(--black);
+}
+
 .link-btn{
   all:unset;
 }
 
-.--app{
-  padding:2em .5em;
-}
 
+/* == Views == */
 .--logged-out-view,
 .--logged-in-view{
   max-width:28.125rem;
-  margin:0 auto;
 }
 
 .--logged-out-view{
@@ -61,13 +83,38 @@ body{
   background-size:cover;
   background-repeat:no-repeat;
   min-height:90vh;
+  justify-content: space-between;
 }
 
+/* == Sign Ins == */
 .--google-btn{
   gap:1em;
-  margin:0 auto;
+  width:100%;
+  background-color: var(--white);
 }
 
 .--google-icon{
-  width:1.5em;
+  width:var(--XXIVpt);
+}
+
+.--submit-btn{
+  color:var(--white);
+  background-color:var(--oranred);
+}
+
+/* == Form Inputs == */
+input[type='text']{
+  border:unset;
+}
+
+input::placeholder{
+  color:var(--black);
+}
+
+input[name='email']{
+  border-bottom:1px solid var(--black);
+}
+
+input[name='password']{
+  border-top:1px solid var(--black);
 }
