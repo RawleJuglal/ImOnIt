@@ -45,6 +45,7 @@ h1,h2,h3,h4,h5,h6{
 
 .bold{font-weight:700;}
 .text-center{text-align: center;}
+.text-right{text-align: right;}
 .text-black{color:var(--black);}
 .text-white{color:var(--white);}
 
@@ -65,6 +66,7 @@ h1,h2,h3,h4,h5,h6{
   border:unset;
   margin:.5rem 0;
   box-shadow: 0px 4px 5px var(--black);
+  -webkit-appearance: none;
 }
 
 .link-btn{
@@ -82,8 +84,12 @@ h1,h2,h3,h4,h5,h6{
   background: url('src/assets/images/login-bg-sm.jpg');
   background-size:cover;
   background-repeat:no-repeat;
-  min-height:90vh;
+  min-height:100vh;
   justify-content: space-between;
+}
+
+.--logged-in-view{
+  display:none;
 }
 
 /* == Sign Ins == */
@@ -102,14 +108,22 @@ h1,h2,h3,h4,h5,h6{
   background-color:var(--oranred);
 }
 
+.--password-reset,
+.--create-account{
+  color:var(--white);
+}
+.--create-account{
+  text-align:right;
+}
+
 /* == Form Inputs == */
 input{
   border-radius:unset;
 }
 
-input.btn{
+/* input.btn{
   box-shadow: 0px 4px 5px var(--black);
-}
+} */
 
 input[type='text']{
   border:unset;
