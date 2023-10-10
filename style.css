@@ -103,6 +103,10 @@ h1,h2,h3,h4,h5,h6{
 }
 
 /* == Form Inputs == */
+input{
+  border-radius:unset;
+}
+
 input[type='text']{
   border:unset;
 }
