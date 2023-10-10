@@ -145,6 +145,12 @@ input[name='password']{
 @media (min-width:450px) {
   .--logged-out-view,
   .--logged-in-view{
-    max-width: 48rem;
+    max-width: unset;
+  }
+
+  .--login-controls{
+    width:100%;
+    max-width:32rem;
+    margin:0 auto;
   }
 }
