@@ -67,6 +67,7 @@ h1,h2,h3,h4,h5,h6{
   margin:.5rem 0;
   box-shadow: 0px 4px 5px var(--black);
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .link-btn{
@@ -139,4 +140,11 @@ input[name='email']{
 
 input[name='password']{
   border-top:1px solid var(--black);
+}
+
+@media (min-width:450px) {
+  .--logged-out-view,
+  .--logged-in-view{
+    margin:0 auto;
+  }
 }
