@@ -31,11 +31,15 @@ h1,h2,h3,h4,h5,h6{
   padding: 0;
 }
 
+.VIIIpt-my{margin:var(--VIIIpt) 0}
+.VIIIpt-mx{margin:0 var(--VIIIpt)}
 .XVIpt-my{margin:var(--XVIpt) 0}
 .XVIpt-mx{margin:0 var(--XVIpt)}
 .XXXIIpt-my{margin:var(--XXXIIpt) 0}
 .XXXIIpt-mx{margin:0 var(--XXXIIpt)}
 
+.VIIIpt-py{padding:var(--VIIIpt) 0}
+.VIIIpt-px{padding:0 var(--VIIIpt)}
 .XVIpt-pxy{padding:var(--XVIpt) var(--XVIpt)}
 .XVIpt-py{padding:var(--XVIpt) 0}
 .XVIpt-px{padding:0 var(--XVIpt)}
@@ -68,10 +72,40 @@ h1,h2,h3,h4,h5,h6{
   box-shadow: 0px 4px 5px var(--black);
   -webkit-appearance: none;
   appearance: none;
+  transition: box-shadow .4s .1s;
 }
 
 .link-btn{
   all:unset;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: font-size .4s .1s, color .4s .1s;
+}
+
+.btn:hover,
+.link-btn:hover{
+  cursor: pointer;
+}
+
+.btn:hover{
+  box-shadow: none;
+}
+
+
+
+.link-btn:hover{
+  color:var(--hooker);
+  text-shadow: 1px 1px 1px var(--black);
+  font-size:1.2rem;
+}
+
+@keyframes shadow {
+  0%{
+    box-shadow: 0px 4px 5px var(--black);
+  }
+  100%{
+    box-shadow: none;
+  }
 }
 
 
@@ -112,7 +146,13 @@ h1,h2,h3,h4,h5,h6{
 .--password-reset,
 .--create-account{
   color:var(--white);
+  text-shadow: 2px 2px 5px var(--black);
 }
+
+.--password-reset{
+  margin-top:var(--VIIIpt);
+}
+
 .--create-account{
   text-align:right;
 }
@@ -121,10 +161,6 @@ h1,h2,h3,h4,h5,h6{
 input{
   border-radius:unset;
 }
-
-/* input.btn{
-  box-shadow: 0px 4px 5px var(--black);
-} */
 
 input[type='text']{
   border:unset;
