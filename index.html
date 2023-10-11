@@ -10,40 +10,79 @@
     <link rel="manifest" href="/site.webmanifest">
   </head>
   <body>
-    <div id="app" class="--app">
-      <div id="logged-out-view" class="--logged-out-view XVIpt-pxy flex flex-column">
-        <h1 class="bold text-center XXXIIpt-py">I'm On It</h1>
-        <div id="login-controls" class="--login-controls">
-          <button id="google-btn" class="--google-btn btn XVIpt-py">
-            <img id="google-icon" class="--google-icon" src="/src/assets/providers/google.png" alt="google icon">
-            <span>Sign in with Google</span>
-          </button>
-          <form class='flex flex-column' action="">
-            <input 
-              id="login-email"  
-              class="--login-email text-black bold XVIpt-pxy" 
-              type="text" 
-              name="email"
-              placeholder="Email"
-            >
-            <input 
-              id="login-password" 
-              class="--login-password text-black bold XVIpt-pxy" 
-              type="text" 
-              name="password"
-              placeholder="Password"
-            >
-            <button id="password-reset" class="--password-reset link-btn">forgot your password?</button>
-            <input id='submit-btn' class="--submit-btn btn text-center XVIpt-py" value="Log in">
-            <button id="create-account" class="--create-account link-btn">Don't have an account?</button>
-          </form>
-        </div>
+    <main id="app" class="--app">
+      <section id="logged-out-view" class="--logged-out-view">
+        <div class="container XVIpt-pxy flex flex-column">
+          <h1 class="bold text-center XXXIIpt-py">I'm On It</h1>
+          <div id="login-controls" class="--login-controls">
+            <button id="google-btn" class="--google-btn btn XVIpt-py">
+              <img id="google-icon" class="--google-icon" src="/src/assets/providers/google.png" alt="google icon">
+              <span>Sign in with Google</span>
+            </button>
+            <form class='flex flex-column' action="">
+              <input 
+                id="login-email"  
+                class="--login-email text-black bold XVIpt-pxy" 
+                type="text" 
+                name="email"
+                placeholder="Email"
+              >
+              <input 
+                id="login-password" 
+                class="--login-password text-black bold XVIpt-pxy" 
+                type="password" 
+                name="password"
+                placeholder="Password"
+              >
+              <button id="password-reset" class="--password-reset link-btn">forgot your password?</button>
+              <input id='submit-btn' class="--submit-btn btn text-center XVIpt-py" value="Log in">
+              <button id="create-account" class="--create-account link-btn">Don't have an account?</button>
+            </form>
+          </div><!-- End of login-controls-->
+        </div><!--End of container-->
         
-      </div>
-      <div id="logged-in-view" class="--logged-in-view block-center">
-        <h1>You logged in</h1>
-      </div>
-    </div>
+        
+      </section>
+      <section id="logged-in-view" class="--logged-in-view block-center">
+        <div class="container  XVIpt-pxy flex flex-column">
+          <nav>
+            <button id="sign-out-btn" class="icon-btn">
+                <img src="/src/assets/icons/icon-sign-out.svg" class="icon-img-btn">
+            </button>
+          </nav>
+          <div class="app-container">
+            <div class="user-section flex flex-column flex-align-center">
+              <img id="user-profile-picture">
+              <h2 id="user-greeting" class="text-center"></h2>
+            </div>
+            <div id="display-update" class="display-update-container XVIpt-mxy flex flex-column">
+              <h6 class="VIIIpt-my">
+                We noticed your profile isn't completed. Would you like to update your name or image
+              </h6>
+              <input 
+                id="display-name-input" 
+                name='displayName' type="text" 
+                placeholder="Display Name"
+                class="--display-name-input text-black bold XVIpt-pxy"
+              >
+              <input 
+                id="photo-url-input" 
+                name='profilePhoto' 
+                type="text" 
+                placeholder="Profile Photo URL"
+                class="--photo-url-input text-black bold XVIpt-pxy"
+              >
+              <button 
+                id="update-profile-btn" 
+                class="--update-profile-btn btn text-center XVIpt-py"
+              >
+                Update profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
