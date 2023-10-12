@@ -14,6 +14,17 @@ import {    getAuth,
             sendEmailVerification,
             updateProfile
 } from 'firebase/auth'
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    doc
+} from 'firebase/firestore'
 
 /* == Firebase Setup == */
 const firebaseConfig = {
@@ -27,6 +38,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 /* == UI - Elements == */
@@ -50,6 +62,14 @@ const displayUpdateEl = document.getElementById('display-update');
 const displayNameInputEl = document.getElementById('display-name-input');
 const photoUrlInputEl = document.getElementById('photo-url-input');
 
+const statusEmojiEls = document.getElementsByClassName('status-emoji-btn');
+
+const completedByEl = document.getElementById('due');
+const postInputEl = document.getElementById('post-input');
+const postBtnEl = document.getElementById('post-btn')
+
+const tasksEl = document.getElementById('tasks')
+
 /* == UI - Event Listeners == */
 googleBtnEl.addEventListener('click', authSignInWithGoogle);
 
@@ -61,6 +81,20 @@ createUserLinkEl.addEventListener('click', (event) => authCreateNewUser(event));
 updateUserProfileBtnEl.addEventListener('click', authUpdateProfile)
 
 signOutBtnEl.addEventListener('click', authSignOut);
+
+for(let statusEmojiEl of statusEmojiEls){
+    statusEmojiEl.addEventListener('click', selectStatus);
+}
+
+postBtnEl.addEventListener('click', postButtonPressed);
+
+/* === State === */
+
+let statusState = 0
+
+/* === Global Constants === */
+
+const collectionName = "tasks"
 
 /* === Main Code === */
 onAuthStateChanged(auth, (user) => {
@@ -75,6 +109,7 @@ onAuthStateChanged(auth, (user) => {
         } else {
             hideView(displayUpdateEl);
         }
+        fetchAllTasks(user)
     } else {
         showLoggedOutView()
     }
@@ -209,7 +244,90 @@ function authSignOut() {
         })
 }
 
+/* = Functions - Firebase - Firestore = */
+
+async function addPostToDB(dueDate, postBody, user){
+    try {
+        const docRef = await addDoc(collection(db, collectionName), {
+            due: dueDate,
+            body: postBody,
+            uid:user.uid,
+            createdAt:serverTimestamp(),
+            status:statusState
+        })
+        alert(`Document written with ${docRef.id}`);
+    } catch (error) {
+        console.log(`Error: ${error.code} - ${error.message}, while trying to save`)
+    }
+}
+
+function fetchInRealtimeAndRenderPostsFromDB(query, user){
+    onSnapshot(query, (querySnapShot) =>{
+        clearAll(tasksEl)
+        querySnapShot.forEach((doc) => {
+            renderTask(tasksEl, doc)
+        })
+    })
+}
+
+function fetchAllTasks(user){
+    const tasksRef = collection(db, collectionName);
+
+    const q = query(tasksRef, where("uid", "==", user.uid),
+                    orderBy("due", "desc"));
+
+    fetchInRealtimeAndRenderPostsFromDB(q, user);
+}
+
+
 /* == Functions - UI Functions == */
+function createPostHeader(postData){
+    const statusColors = ['red', 'orange', 'yellow', 'white', 'blue'];
+    const headerDiv = document.createElement("div");
+    headerDiv.className = "header";
+
+    const statusImage = document.createElement("img");
+    statusImage.classList.add('fire', statusColors[postData.status - 1]);
+
+    const headerDateEl = document.createElement('h3');
+
+    headerDateEl.textContent = `Due: ${postData.due} - Created: ${displayDate(postData.createdAt)}`;
+
+    headerDiv.appendChild(statusImage);
+    headerDiv.appendChild(headerDateEl);
+
+    return headerDiv;
+}
+
+function renderTask(tasksEl, wholeDoc){
+    const postData = wholeDoc.data()
+
+    const postDiv = document.createElement('div');
+    postDiv.className = 'post'
+
+    postDiv.appendChild(createPostHeader(postData));
+
+    tasksEl.appendChild(postDiv);
+}
+
+
+function postButtonPressed(){
+    const postBody = postInputEl.value;
+    const dueDate = completedByEl.value;
+    const user = auth.currentUser;
+
+    if(postBody && statusState){
+        addPostToDB(dueDate, postBody, user);
+        clearInputField(postInputEl);
+        clearInputField(completedByEl);
+        resetAllStatusElements(statusEmojiEls);
+    }
+}
+
+function clearAll(element){
+    element.innerHTML = '';
+}
+
 function showLoggedOutView() {
     hideView(viewLoggedIn)
     showView(viewLoggedOut)
@@ -247,4 +365,60 @@ function showProfilePhoto(imgElement, user){
 function showProfileGreeting(imgElement, user){
     const firstName = user.displayName ? user.displayName.split(' ')[0] : 'user';
     imgElement.textContent = `Hey ${firstName}, let's see what we should do today!`
+}
+
+function displayDate(firebaseDate) {
+    console.log(firebaseDate)
+    if (!firebaseDate) {
+      return "Date processing..." 
+    }
+  
+    const date = firebaseDate.toDate()
+    
+    const day = date.getDate()
+    const year = date.getFullYear()
+    
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const month = monthNames[date.getMonth()]
+  
+    let hours = date.getHours()
+    let minutes = date.getMinutes()
+    hours = hours < 10 ? "0" + hours : hours
+    minutes = minutes < 10 ? "0" + minutes : minutes
+  
+    return `${day} ${month} ${year} - ${hours}:${minutes}`
+  }
+
+/* = Functions - UI Functions - Mood = */
+
+function selectStatus(event) {
+    const selectedStatusEmojiElementId = event.currentTarget.id;
+ 
+    changeStatusStyleAfterSelection(selectedStatusEmojiElementId);
+
+    const chosenStatusValue = returnStatusValueFromElementId(selectedStatusEmojiElementId);
+    statusState = chosenStatusValue;
+}
+
+function changeStatusStyleAfterSelection(selectedStatusElement){
+    for(let statusEmojiEl of statusEmojiEls){
+        if(selectedStatusElement === statusEmojiEl.id){
+            statusEmojiEl.classList.remove('unselected-emoji');
+            statusEmojiEl.classList.add('selected-emoji');
+        } else {
+            statusEmojiEl.classList.remove('selected-emoji');
+            statusEmojiEl.classList.add('unselected-emoji');
+        }
+    }
+}
+
+function resetAllStatusElements(allStatusElements){
+    for(let statusEmojiEl of allStatusElements){
+        statusEmojiEl.classList.remove('selected-emoji');
+        statusEmojiEl.classList.remove('unselected-emoji');
+    }
+}
+
+function returnStatusValueFromElementId(element){
+    return Number(element.slice(7))
 }

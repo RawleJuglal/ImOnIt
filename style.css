@@ -10,7 +10,12 @@
   --gunmetal:#2C3539;
   --indigo:#4b0082;
   --hooker:	#49796b;
+  --tiffany:#7ED3BB;
   --oranred:#FF473A;
+  --red:#FF0000;
+  --yellow:#FFF500;
+  --orange:#FFA800;
+  --blue:#0500FF;
   --black:#131313;
   --white:#F8F8F8;
   --IVpt:.25rem;
@@ -165,32 +170,6 @@ h1,h2,h3,h4,h5,h6{
   text-align:right;
 }
 
-/* == Form Inputs == */
-input{
-  border-radius:unset;
-}
-
-input[type='text'],
-input[type='password']{
-  border:unset;
-}
-
-input::placeholder{
-  color:var(--black);
-}
-
-input[name='email'],
-input[name='displayName']{
-  border-bottom:1px solid var(--black);
-}
-
-input[name='password'],
-input[name='profilePhoto']{
-  border-top:1px solid var(--black);
-}
-
-
-
 /* == Logged In View == */
 .--logged-in-view{
   background-color:var(--hooker);
@@ -215,6 +194,12 @@ nav {
   filter: invert(0.5);
 }
 
+.app-container{
+  min-height:100vh;
+  max-width:19.125rem;
+  margin:0 auto;
+}
+
 /* == User Section == */
 .user-section{
   gap:0.8em;
@@ -230,6 +215,221 @@ nav {
 .user-section h2 {
   font-size: 1.2rem;
 }
+
+/* === Post Section === */
+
+.post-section, .display-update-container {
+  gap: 1em;
+}
+
+.--post-btn{
+  background-color:var(--oranred);
+}
+
+/* == Posts Section - Posts == */
+.--tasks-container {
+  gap: 1em;
+  margin-bottom: 1.8em;
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--tiffany);
+  color:var(--white);
+  text-shadow:2px 2px 5px var(--black);
+  padding: 0.8em;
+  gap: 0.4em;
+}
+
+.post .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post .header h3 {
+  font-size: 1em;
+}
+
+.post .header img {
+  width: 3em;
+  height: 2em;
+}
+
+.post p {
+  font-size: 0.9em;
+  line-height: 1.3em;
+}
+
+/* = Posts Section - Posts - Footer = */
+.post .footer {
+  display: flex;
+  align-self: flex-start;
+  gap: 0.4em;
+}
+
+.post .footer button {
+  font-size: 0.9em;
+  padding: 0.2em 0.8em;
+  box-shadow: 0px var(--small-button-height) 0px 0px var(--dark-color);
+  position: relative;
+}
+
+.post .footer button:hover {
+  top: var(--small-button-height);
+  box-shadow: none;
+}
+
+.post .footer .edit-color {
+  background-color: var(--post-color);
+}
+
+.post .footer .delete-color {
+  background-color: var(--delete-color);
+}
+
+/* == Post Section - Mood Emojis == */
+.status-emoji-btn {
+  font-size: 0.8em;
+  font-family:var(--secondary-font);
+  gap: 0.3em;
+  background-color: transparent;
+  border: 0;
+  color:var(--white);
+  text-shadow:2px 2px 5px var(--black);
+}
+
+.status-emoji-btn:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.status-emoji-btn img {
+  width: 3.1em;
+  height: 3.1em;
+}
+
+.selected-emoji {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+.unselected-emoji {
+  transform: scale(1);
+  opacity: 0.5;
+}
+
+.fire{
+  -webkit-mask-image: url('src/assets/icons/fire.svg');
+  mask-image: url('src/assets/icons/fire.svg');
+}
+.red.fire{background-color: var(--red);}
+.yellow.fire{background-color: var(--yellow);}
+.orange.fire{background-color: var(--orange);}
+.white.fire{background-color: var(--white);}
+.blue.fire{background-color: var(--blue);}
+
+/* === Common for elements === */
+
+/* == Form Inputs == */
+.--due{
+  /* font-family:var(--secondary-font); */
+  text-shadow:2px 2px 5px var(--black);
+}
+
+input{
+  border-radius:unset;
+}
+
+input[type='text'],
+input[type='password']{
+  border:unset;
+}
+
+input::placeholder{
+  color:var(--black);
+}
+
+input[name='email'],
+input[name='displayName']{
+  border-bottom:1px solid var(--black);
+}
+
+input[name='password'],
+input[name='profilePhoto']{
+  border-top:1px solid var(--black);
+}
+
+
+input, textarea {
+  font-family: inherit;
+  padding: var(--XVIpt);
+  border-radius: var(--IVpt);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input, button {
+  font-size: 1.1em;
+  text-align: center;
+  border: var(--IVpt) solid var(--gunmetal);
+}
+
+input:focus, button:focus, textarea:focus {
+  outline: none;
+}
+
+/* === Input fields === */
+textarea {
+  font-size: 1em;
+  border: 0;
+  box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, .25);
+  resize: none;
+  height: 6em;
+}
+
+textarea::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--black);
+  opacity: 1; /* Firefox */
+}
+
+textarea:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--black);
+}
+
+textarea::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--black);
+}
+
+input {
+  font-weight: 300;
+}
+
+input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--black);
+  opacity: 1; /* Firefox */
+}
+
+input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--black);
+}
+
+input::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--black);
+}
+
+/* === Buttons === */
+
+button {
+  font-weight: 600;
+  width: 100%;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
 /* == Media Query Changes == */
 
 @media (min-width:450px) {
