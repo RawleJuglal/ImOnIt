@@ -11,6 +11,7 @@
   --indigo:#4b0082;
   --hooker:	#49796b;
   --tiffany:#7ED3BB;
+  --mint:#0ABD8A;
   --oranred:#FF473A;
   --red:#FF0000;
   --yellow:#FFF500;
@@ -47,6 +48,7 @@ h1,h2,h3,h4,h5,h6{
 .XXXIIpt-my{margin:var(--XXXIIpt) 0}
 .XXXIIpt-mx{margin:0 var(--XXXIIpt)}
 
+.IVpt-pxy{padding:var(--IVpt)}
 .VIIIpt-py{padding:var(--VIIIpt) 0}
 .VIIIpt-px{padding:0 var(--VIIIpt)}
 .XVIpt-pxy{padding:var(--XVIpt) var(--XVIpt)}
@@ -226,6 +228,27 @@ nav {
   background-color:var(--oranred);
 }
 
+/* == Posts Section - Filters == */
+
+.filters-and-tasks-section {
+  gap: 0.6em;
+}
+
+.filters-section {
+  gap: 0.4em;
+}
+
+.filter-btn {
+  color: var(--black);
+  font-size: 0.9em;
+  background-color: transparent;
+}
+
+.selected-filter {
+  color: var(--white);
+  background-color: var(--indigo);
+}
+
 /* == Posts Section - Posts == */
 .--tasks-container {
   gap: 1em;
@@ -257,7 +280,7 @@ nav {
   height: 2em;
 }
 
-.post p {
+.post .body p {
   font-size: 0.9em;
   line-height: 1.3em;
 }
@@ -271,22 +294,23 @@ nav {
 
 .post .footer button {
   font-size: 0.9em;
+  color:var(--white);
   padding: 0.2em 0.8em;
-  box-shadow: 0px var(--small-button-height) 0px 0px var(--dark-color);
+  box-shadow: 0px var(--IVpt) 0px 0px var(--gunmetal);
   position: relative;
 }
 
 .post .footer button:hover {
-  top: var(--small-button-height);
+  top: var(--IVpt);
   box-shadow: none;
 }
 
 .post .footer .edit-color {
-  background-color: var(--post-color);
+  background-color: var(--mint);
 }
 
 .post .footer .delete-color {
-  background-color: var(--delete-color);
+  background-color: var(--black);
 }
 
 /* == Post Section - Mood Emojis == */

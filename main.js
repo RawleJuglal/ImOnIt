@@ -23,7 +23,9 @@ import {
     where,
     orderBy,
     onSnapshot,
-    doc
+    doc, 
+    updateDoc,
+    deleteDoc,
 } from 'firebase/firestore'
 
 /* == Firebase Setup == */
@@ -66,10 +68,13 @@ const statusEmojiEls = document.getElementsByClassName('status-emoji-btn');
 
 const completedByEl = document.getElementById('due');
 const postInputEl = document.getElementById('post-input');
-const postBtnEl = document.getElementById('post-btn')
+const postBtnEl = document.getElementById('post-btn');
 
-const tasksEl = document.getElementById('tasks')
+const tasksEl = document.getElementById('tasks');
 
+const allFilterButtonEl = document.getElementById('all-filter-btn');
+
+const filterButtonEls = document.getElementsByClassName('filter-btn')
 /* == UI - Event Listeners == */
 googleBtnEl.addEventListener('click', authSignInWithGoogle);
 
@@ -86,6 +91,10 @@ for(let statusEmojiEl of statusEmojiEls){
     statusEmojiEl.addEventListener('click', selectStatus);
 }
 
+for(let filterButtonEl of filterButtonEls){
+    filterButtonEl.addEventListener('click', selectFilter);
+}
+
 postBtnEl.addEventListener('click', postButtonPressed);
 
 /* === State === */
@@ -99,8 +108,6 @@ const collectionName = "tasks"
 /* === Main Code === */
 onAuthStateChanged(auth, (user) => {
     if(user) {
-        console.log(`AuthStateChanged VV`)
-        console.log(user)
         showLoggedInView()
         showProfilePhoto(userProfilePictureEl, user);
         showProfileGreeting(userProfileGreetingEl, user);
@@ -261,6 +268,15 @@ async function addPostToDB(dueDate, postBody, user){
     }
 }
 
+async function updatePostInDB(docId, newBody){
+    const tasksRef = doc(db, collectionName, docId);
+    await updateDoc(tasksRef, {body: newBody});
+}
+
+async function deletePostFromDB(docId){
+    await deleteDoc(doc(db, collectionName, docId));
+}
+
 function fetchInRealtimeAndRenderPostsFromDB(query, user){
     onSnapshot(query, (querySnapShot) =>{
         clearAll(tasksEl)
@@ -270,11 +286,51 @@ function fetchInRealtimeAndRenderPostsFromDB(query, user){
     })
 }
 
+function fetchTodayPosts(user){
+    const startOfDay = new Date();
+    startOfDay.setHours(0,0,0,0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(24,59,59,999);
+
+    const tasksRef = collection(db, collectionName)
+
+    const q = query(tasksRef, where("uid", "==", user.uid),
+                                where("createdAt", '>=', startOfDay),
+                                where("createdAt", "<=", endOfDay),
+                                orderBy("createdAt", 'asc'));
+
+    fetchInRealtimeAndRenderPostsFromDB(q, user);
+}
+
+function fetchWeekPosts(user){
+    const startOfWeek = new Date();
+    startOfWeek.setHours(0, 0, 0, 0)
+
+    if(startOfWeek.getDay() === 0){
+        startOfWeek.setDate(startOfWeek.getDate()- 6)
+    } else {
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+    }
+
+    const endOfDay = new Date()
+    endOfDay.setHours(24,59,59,999);
+
+    const tasksRef = collection(db, collectionName);
+
+    const q = query(tasksRef, where("uid", "==", user.uid),
+                                where("createdAt", ">=", startOfWeek),
+                                where("createdAt", "<=", endOfDay),
+                                orderBy("createdAt", "asc") );
+
+    fetchInRealtimeAndRenderPostsFromDB(q, user);
+}
+
 function fetchAllTasks(user){
     const tasksRef = collection(db, collectionName);
 
     const q = query(tasksRef, where("uid", "==", user.uid),
-                    orderBy("due", "desc"));
+                    orderBy("due", "asc"));
 
     fetchInRealtimeAndRenderPostsFromDB(q, user);
 }
@@ -299,6 +355,60 @@ function createPostHeader(postData){
     return headerDiv;
 }
 
+function createPostBody(postData){
+    const bodyDiv = document.createElement('div');
+    bodyDiv.className = 'body';
+
+    const bodyEl = document.createElement('p');
+    bodyEl.textContent = postData.body;
+
+    bodyDiv.appendChild(bodyEl);
+
+    return bodyDiv;
+}
+
+function createPostUpdateButton(wholeDoc){
+    const postId = wholeDoc.id;
+    const postData = wholeDoc.data();
+
+    const button = document.createElement('button');
+    button.textContent = "Edit";
+    button.classList.add('edit-color');
+    button.addEventListener("click", ()=> {
+        const newBody = prompt("Edit the post", postData.body);
+
+        if(newBody) {
+            updatePostInDB(postId, newBody);
+        }
+    })
+
+    return button;
+}
+
+function createPostDeleteButton(wholeDoc){
+    const postId = wholeDoc.id;
+    
+    const button = document.createElement('button');
+    button.textContent = 'Delete';
+    button.classList.add('delete-color');
+
+    button.addEventListener('click', ()=>{
+        deletePostFromDB(postId);
+    });
+
+    return button;
+}
+
+function createPostFooter(wholeDoc){
+    const footerDiv = document.createElement('div');
+    footerDiv.className = 'footer';
+
+    footerDiv.appendChild(createPostUpdateButton(wholeDoc));
+    footerDiv.appendChild(createPostDeleteButton(wholeDoc));
+
+    return footerDiv;
+}
+
 function renderTask(tasksEl, wholeDoc){
     const postData = wholeDoc.data()
 
@@ -306,6 +416,8 @@ function renderTask(tasksEl, wholeDoc){
     postDiv.className = 'post'
 
     postDiv.appendChild(createPostHeader(postData));
+    postDiv.appendChild(createPostBody(postData));
+    postDiv.appendChild(createPostFooter(wholeDoc));
 
     tasksEl.appendChild(postDiv);
 }
@@ -368,7 +480,6 @@ function showProfileGreeting(imgElement, user){
 }
 
 function displayDate(firebaseDate) {
-    console.log(firebaseDate)
     if (!firebaseDate) {
       return "Date processing..." 
     }
@@ -421,4 +532,46 @@ function resetAllStatusElements(allStatusElements){
 
 function returnStatusValueFromElementId(element){
     return Number(element.slice(7))
+}
+
+/* == Functions - UI Functions - Date Filters == */
+
+function resetAllFilterButtons(allFilterButtons){
+    for(let filterButtonEl of filterButtonEls){
+        filterButtonEl.classList.remove('selected-filter');
+    }
+}
+
+function updateFilterButtonStyle(selectedFilterElement){
+    selectedFilterElement.classList.add('selected-filter');
+}
+
+function fetchTasksFromPeriod(period, user){
+    if(period == 'today'){
+        fetchTodayPosts(user);
+    } else if (period == 'week'){
+        fetchWeekPosts(user);
+    } else if (period == 'month'){
+        fetchMonthPosts(user);
+    } else if (period == 'all'){
+        fetchAllPosts(user);
+    } else {
+        console.log('nothing matches');
+    }
+}
+
+function selectFilter(event){
+    const user = auth.currentUser;
+
+    const selectedFilterElementId = event.target.id;
+
+    const selectedFilterPeriod = selectedFilterElementId.split('-')[0];
+
+    const selectedFilterElement = document.getElementById(selectedFilterElementId);
+
+    resetAllFilterButtons(filterButtonEls);
+
+    updateFilterButtonStyle(selectedFilterElement);
+
+    fetchTasksFromPeriod(selectedFilterPeriod, user);
 }
