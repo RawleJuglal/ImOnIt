@@ -26,6 +26,7 @@ import {
     doc, 
     updateDoc,
     deleteDoc,
+    Timestamp,
 } from 'firebase/firestore'
 
 /* == Firebase Setup == */
@@ -286,51 +287,76 @@ function fetchInRealtimeAndRenderPostsFromDB(query, user){
     })
 }
 
-function fetchTodayPosts(user){
+function fetchTodayTasks(user){
     const startOfDay = new Date();
     startOfDay.setHours(0,0,0,0);
 
     const endOfDay = new Date();
-    endOfDay.setHours(24,59,59,999);
+    endOfDay.setHours(23,59,59,999);
 
     const tasksRef = collection(db, collectionName)
 
     const q = query(tasksRef, where("uid", "==", user.uid),
-                                where("createdAt", '>=', startOfDay),
-                                where("createdAt", "<=", endOfDay),
-                                orderBy("createdAt", 'asc'));
+                                where("due", '>=', startOfDay),
+                                where("due", "<=", endOfDay),
+                                orderBy("due", 'asc'),
+                                orderBy('status', 'desc'));
 
     fetchInRealtimeAndRenderPostsFromDB(q, user);
 }
 
-function fetchWeekPosts(user){
-    const startOfWeek = new Date();
-    startOfWeek.setHours(0, 0, 0, 0)
+function fetchWeekTasks(user){
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0)
 
-    if(startOfWeek.getDay() === 0){
-        startOfWeek.setDate(startOfWeek.getDate()- 6)
+    const endOfWeek = new Date();
+    endOfWeek.setHours(23,59,59,999);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+    const tasksRef = collection(db, collectionName);
+
+    console.log(`S:${startOfDay} - E: ${endOfWeek}`)
+    const q = query(tasksRef, where("uid", "==", user.uid),
+                                where("due", '>=', startOfDay),
+                                where("due", "<=", endOfWeek),
+                                orderBy("due", 'asc'),
+                                orderBy('status', 'desc'));
+
+    fetchInRealtimeAndRenderPostsFromDB(q, user);
+}
+
+function fetchMonthTasks(user){
+    const startOfDay = new Date();
+    startOfDay.setHours(0,0,0,0);
+
+    const endOfMonth = new Date();
+    if(endOfMonth.getMonth() === 12){
+        endOfMonth.setMonth(0)
     } else {
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+        endOfMonth.setMonth(endOfMonth.getMonth() + 1);
     }
-
-    const endOfDay = new Date()
-    endOfDay.setHours(24,59,59,999);
+    endOfMonth.setHours(23, 59, 59, 999);
 
     const tasksRef = collection(db, collectionName);
 
     const q = query(tasksRef, where("uid", "==", user.uid),
-                                where("createdAt", ">=", startOfWeek),
-                                where("createdAt", "<=", endOfDay),
-                                orderBy("createdAt", "asc") );
+                                where("due", '>=', startOfDay),
+                                where("due", "<=", endOfMonth),
+                                orderBy("due", 'asc'),
+                                orderBy('status', 'desc'));
 
     fetchInRealtimeAndRenderPostsFromDB(q, user);
 }
+
+
 
 function fetchAllTasks(user){
     const tasksRef = collection(db, collectionName);
 
     const q = query(tasksRef, where("uid", "==", user.uid),
-                    orderBy("due", "asc"));
+                    orderBy("due", "asc"),
+                    orderBy("status", "desc"),
+                    );
 
     fetchInRealtimeAndRenderPostsFromDB(q, user);
 }
@@ -347,7 +373,7 @@ function createPostHeader(postData){
 
     const headerDateEl = document.createElement('h3');
 
-    headerDateEl.textContent = `Due: ${postData.due} - Created: ${displayDate(postData.createdAt)}`;
+    headerDateEl.textContent = `Due: ${displayDate(postData.due)} - Created: ${displayDate(postData.createdAt)}`;
 
     headerDiv.appendChild(statusImage);
     headerDiv.appendChild(headerDateEl);
@@ -425,11 +451,12 @@ function renderTask(tasksEl, wholeDoc){
 
 function postButtonPressed(){
     const postBody = postInputEl.value;
-    const dueDate = completedByEl.value;
+    const dateValue = new Date(completedByEl.value);
+
     const user = auth.currentUser;
 
     if(postBody && statusState){
-        addPostToDB(dueDate, postBody, user);
+        addPostToDB(dateValue, postBody, user);
         clearInputField(postInputEl);
         clearInputField(completedByEl);
         resetAllStatusElements(statusEmojiEls);
@@ -483,7 +510,7 @@ function displayDate(firebaseDate) {
     if (!firebaseDate) {
       return "Date processing..." 
     }
-  
+
     const date = firebaseDate.toDate()
     
     const day = date.getDate()
@@ -548,13 +575,13 @@ function updateFilterButtonStyle(selectedFilterElement){
 
 function fetchTasksFromPeriod(period, user){
     if(period == 'today'){
-        fetchTodayPosts(user);
+        fetchTodayTasks(user);
     } else if (period == 'week'){
-        fetchWeekPosts(user);
+        fetchWeekTasks(user);
     } else if (period == 'month'){
-        fetchMonthPosts(user);
+        fetchMonthTasks(user);
     } else if (period == 'all'){
-        fetchAllPosts(user);
+        fetchAllTasks(user);
     } else {
         console.log('nothing matches');
     }
